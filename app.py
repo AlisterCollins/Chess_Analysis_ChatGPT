@@ -272,14 +272,18 @@ def find_target_side(
     return ""
 
 
-@app.get("/health", operation_id="checkChessEngineHealth")
+
+@app.get(
+    "/health",
+    operation_id="checkChessEngineHealth",
+    dependencies=[Security(require_api_key)],
+)
 def health() -> dict[str, Any]:
     return {
         "ok": True,
         "stockfish_path": STOCKFISH_PATH,
         "api_version": "2.0.0",
     }
-
 
 @app.post(
     "/analyze-position",
