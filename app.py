@@ -13,10 +13,17 @@ from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from pydantic import BaseModel, Field
 
 
+
 app = FastAPI(
     title="Stockfish Chess Analysis API",
     description="Analyze chess positions and PGN games with Stockfish.",
     version="1.0.0",
+    servers=[
+        {
+            "url": "https://chess-analysis-chatgpt.onrender.com",
+            "description": "Production Stockfish server",
+        }
+    ],
 )
 
 security = HTTPBearer(auto_error=False)
