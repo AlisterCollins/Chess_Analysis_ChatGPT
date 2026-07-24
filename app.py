@@ -99,14 +99,14 @@ def score_for_white(score: chess.engine.PovScore) -> int:
 
 
 def classify_loss(loss_cp: int) -> str:
+    if loss_cp >= 500:
+        return "large blunder"
     if loss_cp >= 300:
         return "blunder"
-    if loss_cp >= 150:
+    if loss_cp >= 110:
         return "mistake"
-    if loss_cp >= 75:
+    if loss_cp >= 50:
         return "inaccuracy"
-    if loss_cp >= 30:
-        return "small concession"
     return "normal"
 
 
@@ -134,7 +134,7 @@ def summarize_player(
         median_loss = round(float(statistics.median(capped_losses)), 1)
         good_rate = round(
             100.0
-            * sum(loss <= 30 for loss in capped_losses)
+            * sum(loss <= 50 for loss in capped_losses)
             / len(capped_losses),
             1,
         )
@@ -143,23 +143,26 @@ def summarize_player(
         median_loss = 0.0
         good_rate = 0.0
 
-    return {
-        "player": player,
-        "moves_analyzed": len(player_moves),
-        "non_forced_decisions": len(non_forced),
-        "average_loss_cp_capped": average_loss,
-        "median_loss_cp_capped": median_loss,
-        "moves_with_loss_30cp_or_less_percent": good_rate,
-        "inaccuracies": sum(
-            item["classification"] == "inaccuracy" for item in non_forced
-        ),
-        "mistakes": sum(
-            item["classification"] == "mistake" for item in non_forced
-        ),
-        "blunders": sum(
-            item["classification"] == "blunder" for item in non_forced
-        ),
-    }
+return {
+    "player": player,
+    "moves_analyzed": len(player_moves),
+    "non_forced_decisions": len(non_forced),
+    "average_loss_cp_capped": average_loss,
+    "median_loss_cp_capped": median_loss,
+    "moves_with_loss_30cp_or_less_percent": good_rate,
+    "inaccuracies": sum(
+        item["classification"] == "inaccuracy" for item in non_forced
+    ),
+    "mistakes": sum(
+        item["classification"] == "mistake" for item in non_forced
+    ),
+    "blunders": sum(
+        item["classification"] == "blunder" for item in non_forced
+    ),
+    "large_blunders": sum(
+        item["classification"] == "large blunder" for item in non_forced
+    ),
+}
 
 
 def analyze_game_with_engine(
