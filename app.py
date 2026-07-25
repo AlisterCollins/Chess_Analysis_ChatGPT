@@ -99,13 +99,13 @@ def score_for_white(score: chess.engine.PovScore) -> int:
 
 
 def classify_loss(loss_cp: int) -> str:
+    if loss_cp >= 500:
+        return "large blunder"
     if loss_cp >= 300:
         return "blunder"
-    if loss_cp >= 150:
+    if loss_cp >= 120:
         return "mistake"
-    if loss_cp >= 75:
-        return "inaccuracy"
-    if loss_cp >= 30:
+    if loss_cp >= 50:
         return "small concession"
     return "normal"
 
@@ -134,7 +134,7 @@ def summarize_player(
         median_loss = round(float(statistics.median(capped_losses)), 1)
         good_rate = round(
             100.0
-            * sum(loss <= 30 for loss in capped_losses)
+            * sum(loss <= 50 for loss in capped_losses)
             / len(capped_losses),
             1,
         )
@@ -149,15 +149,15 @@ def summarize_player(
         "non_forced_decisions": len(non_forced),
         "average_loss_cp_capped": average_loss,
         "median_loss_cp_capped": median_loss,
-        "moves_with_loss_30cp_or_less_percent": good_rate,
-        "inaccuracies": sum(
-            item["classification"] == "inaccuracy" for item in non_forced
-        ),
+        "moves_with_loss_50cp_or_less_percent": good_rate,
         "mistakes": sum(
             item["classification"] == "mistake" for item in non_forced
         ),
         "blunders": sum(
             item["classification"] == "blunder" for item in non_forced
+        ),
+        "large blunder": sum(
+            item["classification"] == "large blunder" for item in non_forced
         ),
     }
 
@@ -430,7 +430,7 @@ def analyze_batch(request: BatchRequest) -> dict[str, Any]:
                     "non_forced_decisions": 0,
                     "average_loss_cp_capped": 0.0,
                     "median_loss_cp_capped": 0.0,
-                    "moves_with_loss_30cp_or_less_percent": 0.0,
+                    "moves_with_loss_50cp_or_less_percent": 0.0,
                     "inaccuracies": 0,
                     "mistakes": 0,
                     "blunders": 0,
