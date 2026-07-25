@@ -320,8 +320,8 @@ def analyze_position(request: PositionRequest) -> dict[str, Any]:
         lines.append(
             {
                 "rank": rank,
-                "evaluation_cp_white": score.score(mate_score=100000),
-                "mate_for_white": score.mate(),
+                "evaluation_cp_white": int(score.score(mate_score=100000) or 0),
+                "mate_for_white": int(score.mate() or 0),
                 "best_move_uci": pv[0].uci() if pv else "",
                 "best_move_san": board.san(pv[0]) if pv else "",
                 "principal_variation_uci": [move.uci() for move in pv],
